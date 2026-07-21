@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full overflow-hidden" data-bs-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Screenshot Background Maker</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .logo-gradient {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      display: inline-block;
+    }
+    [data-bs-theme="dark"] .logo-gradient {
+      background: linear-gradient(135deg, #60A5FA 0%, #A78BFA 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 10px; width: 10px;
+      left: 3px; bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+    input:checked + .slider { background-color: #667eea; }
+    input:checked + .slider:before { transform: translateX(12px); }
+    [data-bs-theme="dark"] input:checked + .slider { background-color: #60A5FA; }
+    .switch input:disabled + .slider {
+      opacity: 0.5;
+      cursor: not-allowed;
+      background-color: #d1d5db;
+    }
+    .switch input:disabled:checked + .slider {
+      background-color: #9ca3af;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes scaleIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .sidebar::-webkit-scrollbar { width: 2px; }
+    .sidebar::-webkit-scrollbar-track { background: transparent; }
+    .sidebar::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
+    [data-bs-theme="dark"] .sidebar::-webkit-scrollbar-thumb { background: #4b5563; }
+    .dropdown-list::-webkit-scrollbar { display: none; width: 0; background: transparent; }
+    .dropdown-list { scrollbar-width: none; -ms-overflow-style: none; }
+    /* Ensure dropdown can extend beyond sidebar */
+    .sidebar { overflow: visible; }
+  </style>
+</head>
+<body class="h-full overflow-hidden bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 flex flex-col">
+
+  <!-- ========== NAVBAR ========== -->
+  <header class="flex-shrink-0 h-10 px-3 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+    <a href="/" class="flex items-center gap-2 no-underline hover:opacity-80 transition-opacity">
+      <i class="fas fa-camera text-blue-500 dark:text-blue-400 text-base"></i>
+      <span class="logo-gradient font-black tracking-tight leading-tight whitespace-nowrap text-xs sm:text-sm flex items-center gap-1">
+        <span>Screenshot</span>
+        <span class="font-bold">Background</span>
+        <span class="font-medium">Maker</span>
+      </span>
+    </a>
+    <button id="theme-toggle" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors text-base">
+      <i class="fas fa-moon dark:hidden"></i>
+      <i class="fas fa-sun hidden dark:inline"></i>
+    </button>
+  </header>
+
+  <!-- ========== MAIN ========== -->
+  <main class="flex-1 min-h-0 flex flex-row">
+
+    <!-- ===== LEFT SIDEBAR ===== -->
+    <aside class="sidebar w-[55px] min-w-[55px] bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col overflow-y-auto p-1.5 px-1 gap-1.5">
+
+      <!-- Padding -->
+      <div class="flex flex-col gap-0.5 pb-1.5 border-b border-gray-200 dark:border-gray-700">
+        <div class="text-[8px] uppercase tracking-wider text-gray-400 dark:text-gray-500 font-semibold text-center py-0.5">Pad</div>
+        <div class="flex flex-col items-center gap-0.5">
+          <div class="custom-select-wrap relative w-full">
+            <select id="padding" disabled class="sr-only">
+              <option value="0">0</option><option value="10">10</option><option value="20" selected>20</option>
+              <option value="40">40</option><option value="60">60</option><option value="80">80</option><option value="100">100</option>
+            </select>
+            <button type="button" class="dropdown-button w-full flex items-center justify-between px-2 py-0.5 text-[10px] border border-gray-200 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors disabled:opacity-50 disabled:pointer-events-none">
+              <span class="dropdown-text">20</span>
+              <i class="fas fa-chevron-down text-[8px] text-gray-500 dark:text-gray-400 ml-0.5"></i>
+            </button>
+            <ul class="dropdown-list absolute left-0 top-full mt-1 min-w-[80px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded shadow-lg max-h-32 overflow-y-auto z-20 hidden" role="listbox"></ul>
+          </div>
+        </div>
+      </div>
+      <!-- Corner Radius -->
+      <div class="flex flex-col gap-0.5 pb-1.5 border-b border-gray-200 dark:border-gray-700">
+        <div class="text-[8px] uppercase tracking-wider text-gray-400 dark:text-gray-500 font-semibold text-center py-0.5">Rad</div>
+        <div class="flex flex-col items-center gap-0.5">
+          <div class="custom-select-wrap relative w-full">
+            <select id="corner-radius" disabled class="sr-only">
+              <option value="0">0</option><option value="4">4</option><option value="8" selected>8</option>
+              <option value="12">12</option><option value="16">16</option><option value="24">24</option><option value="32">32</option>
+            </select>
+            <button type="button" class="dropdown-button w-full flex items-center justify-between px-2 py-0.5 text-[10px] border border-gray-200 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors disabled:opacity-50 disabled:pointer-events-none">
+              <span class="dropdown-text">8</span>
+              <i class="fas fa-chevron-down text-[8px] text-gray-500 dark:text-gray-400 ml-0.5"></i>
+            </button>
+            <ul class="dropdown-list absolute left-0 top-full mt-1 min-w-[80px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded shadow-lg max-h-32 overflow-y-auto z-20 hidden" role="listbox"></ul>
+          </div>
+        </div>
+      </div>
+      <!-- Gradient Background -->
+      <div class="flex flex-col gap-0.5 pb-1.5 border-b border-gray-200 dark:border-gray-700">
+        <div class="text-[8px] uppercase tracking-wider text-gray-400 dark:text-gray-500 font-semibold text-center py-0.5">Bg</div>
+        <div class="flex flex-col items-center gap-0.5">
+          <div class="flex items-center gap-0.5">
+            <input type="color" id="color-start" value="#667eea" disabled class="w-6 h-6 p-0 border border-gray-300 dark:border-gray-600 rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed" />
+            <input type="color" id="color-end" value="#764ba2" disabled class="w-6 h-6 p-0 border border-gray-300 dark:border-gray-600 rounded cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed" />
+          </div>
+          <div id="gradient-preview" class="w-6 h-6 rounded border border-gray-300 dark:border-gray-600 cursor-pointer opacity-50 pointer-events-none" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);"></div>
+        </div>
+      </div>
+      <!-- Aspect Ratio -->
+      <div class="flex flex-col gap-0.5 pb-1.5 border-b border-gray-200 dark:border-gray-700">
+        <div class="text-[8px] uppercase tracking-wider text-gray-400 dark:text-gray-500 font-semibold text-center py-0.5">Ratio</div>
+        <div class="flex flex-col items-center gap-0.5">
+          <div class="custom-select-wrap relative w-full">
+            <select id="aspect-ratio" disabled class="sr-only">
+              <option value="custom">Custom</option><option value="1:1">1:1</option><option value="16:9">16:9</option>
+              <option value="9:16">9:16</option><option value="4:3">4:3</option><option value="3:4">3:4</option>
+            </select>
+            <button type="button" class="dropdown-button w-full flex items-center justify-between px-2 py-0.5 text-[10px] border border-gray-200 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors disabled:opacity-50 disabled:pointer-events-none">
+              <span class="dropdown-text">Custom</span>
+              <i class="fas fa-chevron-down text-[8px] text-gray-500 dark:text-gray-400 ml-0.5"></i>
+            </button>
+            <ul class="dropdown-list absolute left-0 top-full mt-1 min-w-[80px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded shadow-lg max-h-32 overflow-y-auto z-20 hidden" role="listbox"></ul>
+          </div>
+        </div>
+      </div>
+      <!-- Frame -->
+      <div class="flex flex-col gap-0.5 pb-1.5 border-b border-gray-200 dark:border-gray-700">
+        <div class="text-[8px] uppercase tracking-wider text-gray-400 dark:text-gray-500 font-semibold text-center py-0.5">Frame</div>
+        <div class="flex flex-col items-center gap-0.5">
+          <div class="flex items-center gap-0.5">
+            <label class="switch relative inline-block w-7 h-4 flex-shrink-0">
+              <input type="checkbox" class="opacity-0 w-0 h-0" id="browser-frame-toggle" disabled />
+              <span class="slider absolute cursor-pointer inset-0 bg-gray-300 transition-colors duration-300 rounded-full"></span>
+            </label>
+          </div>
+          <div class="custom-select-wrap relative w-full">
+            <select id="frame-type" disabled class="sr-only">
+              <option value="none">None</option><option value="browser-chrome">Chrome</option><option value="browser-safari">Safari</option>
+              <option value="browser-firefox">Firefox</option><option value="browser-edge">Edge</option><option value="iphone-14">iPhone14</option>
+              <option value="iphone-13">iPhone13</option><option value="ipad-pro">iPad</option><option value="macbook">MacBook</option><option value="imac">iMac</option>
+            </select>
+            <button type="button" class="dropdown-button w-full flex items-center justify-between px-2 py-0.5 text-[10px] border border-gray-200 dark:border-gray-600 rounded bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors disabled:opacity-50 disabled:pointer-events-none">
+              <span class="dropdown-text">None</span>
+              <i class="fas fa-chevron-down text-[8px] text-gray-500 dark:text-gray-400 ml-0.5"></i>
+            </button>
+            <ul class="dropdown-list absolute left-0 top-full mt-1 min-w-[80px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded shadow-lg max-h-32 overflow-y-auto z-20 hidden" role="listbox"></ul>
+          </div>
+        </div>
+      </div>
+      <!-- Reset buttons -->
+      <div class="flex flex-col gap-0.5 pb-1.5 border-b border-gray-200 dark:border-gray-700">
+        <div class="text-[8px] uppercase tracking-wider text-gray-400 dark:text-gray-500 font-semibold text-center py-0.5">Reset</div>
+        <div class="flex items-center justify-center gap-0.5">
+          <button id="reset-position-btn" class="text-gray-400 hover:text-blue-500 transition text-sm w-6 h-6 flex items-center justify-center opacity-50 pointer-events-none" title="Reset Position" style="display:none;">
+            <i class="fas fa-undo-alt"></i>
+          </button>
+          <button id="reset-btn" class="text-gray-400 hover:text-red-500 transition text-sm w-6 h-6 flex items-center justify-center" title="Reset All">
+            <i class="fas fa-trash-alt"></i>
+          </button>
+        </div>
+      </div>
+      <!-- Action buttons -->
+      <div class="mt-auto flex flex-col gap-1 pt-1.5 border-t border-gray-200 dark:border-gray-700">
+        <button id="copy-btn" disabled class="bg-gray-100 dark:bg-gray-700 border-none rounded py-1 text-[9px] font-medium text-gray-700 dark:text-gray-200 flex flex-col items-center gap-0.5 w-full disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-200 dark:hover:bg-gray-600 transition">
+          <i class="fas fa-copy text-sm"></i> Copy
+        </button>
+        <button id="download-btn" disabled class="bg-gray-100 dark:bg-gray-700 border-none rounded py-1 text-[9px] font-medium text-gray-700 dark:text-gray-200 flex flex-col items-center gap-0.5 w-full disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-200 dark:hover:bg-gray-600 transition">
+          <i class="fas fa-download text-sm"></i> Download
+        </button>
+        <button id="post-btn" disabled class="bg-gray-100 dark:bg-gray-700 border-none rounded py-1 text-[9px] font-medium text-gray-700 dark:text-gray-200 flex flex-col items-center gap-0.5 w-full disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-200 dark:hover:bg-gray-600 transition">
+          <i class="fas fa-share-alt text-sm"></i> Post
+        </button>
+        <div id="usage-info" class="hidden text-[8px] text-red-500 text-center flex flex-col items-center">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span id="usage-text"></span>
+          <a id="auth-prompt" href="/sign-up" class="underline text-blue-400">Sign in</a>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ===== PREVIEW AREA ===== -->
+    <div class="flex-1 min-h-0 p-2 flex items-center justify-center">
+      <div id="preview-container" class="w-full h-full bg-slate-50 dark:bg-slate-800 rounded-xl border-2 border-gray-200 dark:border-gray-700 p-1 flex items-center justify-center relative shadow-inner overflow-hidden">
+        <div id="upload-area-container" class="absolute inset-0 flex items-center justify-center border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg m-2 bg-white/90 dark:bg-gray-800/90 transition-colors cursor-pointer">
+          <label for="image-upload" class="w-full h-full flex flex-col items-center justify-center text-center p-4 cursor-pointer">
+            <input type="file" id="image-upload" accept="image/*" class="hidden" />
+            <i class="fas fa-image text-4xl text-gray-400 dark:text-gray-500 mb-2"></i>
+            <p class="text-sm font-medium text-gray-700 dark:text-gray-300">Tap to upload</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400">PNG, JPG, WebP</p>
+          </label>
+        </div>
+        <div id="preview-placeholder" class="hidden text-center text-gray-400 dark:text-gray-500">
+          <i class="fas fa-image text-5xl mb-3"></i>
+          <p class="text-sm">No image</p>
+        </div>
+        <canvas id="result-canvas" class="hidden block rounded-lg shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1)] cursor-move select-none"></canvas>
+        <p id="drag-hint" class="hidden absolute bottom-2 left-0 right-0 text-center text-xs text-gray-400 dark:text-gray-500 pointer-events-none">
+          <i class="fas fa-arrows-alt"></i> Drag to move &bull; <i class="fas fa-shift"></i>+drag moves frame
+        </p>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ========== SCRIPTS ========== -->
+  <script src="background-maker.js"></script>
+  <script src="background-app.js"></script>
+  <script src="bg-dropdowns.js"></script>
+</body>
+</html>
